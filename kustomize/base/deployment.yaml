@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
       - name: model-router
-        image: ghcr.io/agentic-layer/model-router-envoy:latest
+        image: ghcr.io/agentic-layer/model-router-envoy:main
         imagePullPolicy: Always
         ports:
         - name: http
