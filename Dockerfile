@@ -1,3 +1,5 @@
-FROM envoyproxy/envoy:distroless-v1.32-latest
+FROM envoyproxy/envoy:distroless-v1.34-latest
 
-COPY envoy.yaml /etc/envoy/envoy.yaml
+COPY envoy.yaml /envoy.yaml
+
+CMD ["-c", "/envoy.yaml"]
