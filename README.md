@@ -22,7 +22,7 @@ kubectl create secret generic openai-api-key --from-literal=OPENAI_API_KEY=$OPEN
 kubectl apply -k kustomize/local/
 
 # to test the proxy, issue the following curl command
-curl http://openai.127.0.0.1.sslip.io:10000/v1/chat/completions \
+curl http://openai.127.0.0.1.sslip.io/v1/chat/completions \
   -H "Content-Type: application/json" \
   -d '{
      "model": "gpt-4o-mini",
