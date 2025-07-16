@@ -21,9 +21,6 @@ docker build -t agentic-layer/model-router-envoy .
 
 # Run the container with required environment variables
 docker run -p 10000:10000 -e OPENAI_API_KEY=your_key_here agentic-layer/model-router-envoy
-
-# Run with docker-compose for easier environment management
-docker run -p 10000:10000 --env-file .env agentic-layer/model-router-envoy
 ```
 
 ### Testing the Router
@@ -33,6 +30,25 @@ docker run -p 10000:10000 --env-file .env agentic-layer/model-router-envoy
 curl -X POST http://localhost:10000/v1/chat/completions \
   -H "Content-Type: application/json" \
   -d '{"model": "gpt-3.5-turbo", "messages": [{"role": "user", "content": "Hello"}]}'
+```
+
+### Kubernetes Deployment
+
+```bash
+# Create the required OpenAI API key secret
+kubectl create secret generic openai-api-key --from-literal=OPENAI_API_KEY=$OPENAI_API_KEY
+
+# Deploy using Kustomize
+kubectl apply -k kustomize/local/
+
+# Test the deployed proxy
+curl http://openai.127.0.0.1.sslip.io/v1/chat/completions \
+  -H "Content-Type: application/json" \
+  -d '{
+     "model": "gpt-4o-mini",
+     "messages": [{"role": "user", "content": "Say this is a test!"}],
+     "temperature": 0.7
+   }'
 ```
 
 ## Architecture
@@ -69,18 +85,34 @@ The project includes a comprehensive GitHub Actions workflow that:
 
 ```
 .
-├── envoy.yaml          # Main Envoy configuration
-├── Dockerfile          # Container build definition
-├── README.md           # Project documentation
-├── .github/workflows/  # CI/CD pipeline
-└── .gitignore         # Git ignore patterns
+├── config/
+│   └── envoy.yaml          # Main Envoy configuration
+├── kustomize/
+│   ├── base/               # Base Kubernetes resources
+│   │   ├── deployment.yaml
+│   │   ├── service.yaml
+│   │   └── kustomization.yaml
+│   └── local/              # Local development overlay
+│       ├── ingress.yaml
+│       └── kustomization.yaml
+├── Dockerfile              # Container build definition
+├── README.md               # Project documentation
+├── .github/workflows/      # CI/CD pipeline
+└── .gitignore             # Git ignore patterns
 ```
 
 ## Extending the Router
 
 To add support for additional LLM providers:
 
-1. Add new cluster definitions in `envoy.yaml` for the provider's API endpoint
+1. Add new cluster definitions in `config/envoy.yaml` for the provider's API endpoint
 2. Update the routing configuration to include path-based or header-based routing rules
 3. Modify the Lua filter to handle different authentication methods as needed
 4. Update environment variable requirements for additional API keys
+5. Update Kubernetes deployment manifests in `kustomize/` to include new secrets/config
+
+## Kubernetes Resources
+
+- **Base Resources** (`kustomize/base/`): Core deployment, service, and kustomization files
+- **Local Overlay** (`kustomize/local/`): Development-specific configuration including ingress for local testing
+- **Deployment**: Requires `openai-api-key` secret to be created manually before deployment
