@@ -21,9 +21,6 @@ docker build -t agentic-layer/model-router-envoy .
 
 # Run the container with required environment variables
 docker run -p 10000:10000 -e OPENAI_API_KEY=your_key_here agentic-layer/model-router-envoy
-
-# Run with docker-compose for easier environment management
-docker run -p 10000:10000 --env-file .env agentic-layer/model-router-envoy
 ```
 
 ### Testing the Router
