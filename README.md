@@ -6,6 +6,9 @@ meant to route between different LLM providers, such as OpenAI or Gemini.
 ### Building and Running
 
 ```bash
+# install local development dependencies
+brew bundle --no-lock --verbose
+
 # Build the Docker image
 docker build -t agentic-layer/model-router-envoy .
 
@@ -22,7 +25,7 @@ kubectl create secret generic openai-api-key --from-literal=OPENAI_API_KEY=$OPEN
 kubectl apply -k kustomize/local/
 
 # to test the proxy, issue the following curl command
-curl http://openai.127.0.0.1.sslip.io/v1/chat/completions \
+curl http://envoy.127.0.0.1.sslip.io/llm/openai \
   -H "Content-Type: application/json" \
   -d '{
      "model": "gpt-4o-mini",

@@ -5,7 +5,7 @@ metadata:
   namespace: default
 spec:
   rules:
-  - host: openai.127.0.0.1.sslip.io
+  - host: envoy.127.0.0.1.sslip.io
     http:
       paths:
       - backend:

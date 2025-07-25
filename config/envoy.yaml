@@ -35,8 +35,9 @@ static_resources:
               domains: ["*"]
               routes:
               - match:
-                  prefix: "/"
-                route:
+                  prefix: "/llm/openai"
+                route:  
+                  prefix_rewrite: "/v1/chat/completions"
                   host_rewrite_literal: api.openai.com
                   cluster: api_openapi_com
 
